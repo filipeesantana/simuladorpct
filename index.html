@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consórcio PCT — Simulador</title>
+<meta name="description" content="Simulador do consórcio entre amigos do grupo PCT: entenda como funciona, mês a mês.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f6f4; --card:#fff; --ink:#13221c; --muted:#5d6c66; --line:#e2e9e5;
+  --green:#0e9f6e; --green-d:#087a55; --green-l:#e5f6ee;
+  --gold:#f0b100; --gold-d:#a87800; --gold-l:#fff5d6;
+  --blue:#2563eb; --blue-l:#e8efff; --red:#d6453d; --red-l:#fdecea;
+  --radius:16px; --shadow:0 1px 2px rgba(16,40,30,.05),0 8px 24px rgba(16,40,30,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.row.center{justify-content:center}
+.small{font-size:14px}
+.muted{color:var(--muted)}
+b{font-weight:700}
+
+/* NAV */
+.topnav{position:sticky;top:0;z-index:40;background:rgba(11,61,46,.95);backdrop-filter:blur(8px);color:#fff}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:52px;gap:12px}
+.brand{font-weight:800;text-decoration:none;letter-spacing:-.01em;white-space:nowrap}
+.links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.links::-webkit-scrollbar{display:none}
+.links a{text-decoration:none;font-size:14px;font-weight:600;padding:6px 10px;border-radius:8px;white-space:nowrap;opacity:.9}
+.links a:hover{background:rgba(255,255,255,.12);opacity:1}
+
+/* HERO */
+.hero{background:radial-gradient(circle at 85% 10%,rgba(240,177,0,.25),transparent 40%),linear-gradient(135deg,#0b3d2e,#0e9f6e);color:#fff;padding:44px 0 52px}
+.hero h1{font-size:clamp(30px,5.5vw,48px);margin:10px 0 10px;letter-spacing:-.025em;line-height:1.08}
+.hero .lead{font-size:clamp(16px,2.3vw,19px);opacity:.95;max-width:660px;margin:0 0 18px}
+.tag{display:inline-block;background:rgba(255,255,255,.16);padding:5px 11px;border-radius:99px;font-size:13px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 24px}
+.chip{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:8px 12px;border-radius:12px;font-size:14px}
+.chip b{font-size:16px}
+
+/* BOTÕES */
+.btn{appearance:none;border:0;border-radius:12px;padding:11px 18px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:transform .08s,background .15s,opacity .15s,box-shadow .15s;line-height:1.2}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--green);color:#fff;box-shadow:0 4px 14px rgba(14,159,110,.3)}
+.btn-primary:hover:not(:disabled){background:var(--green-d)}
+.btn-gold{background:var(--gold);color:#2b1d00;box-shadow:0 4px 14px rgba(240,177,0,.35)}
+.btn-gold:hover:not(:disabled){background:#e0a400}
+.btn-ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+.btn-ghost:hover:not(:disabled){border-color:#c6d3cd}
+.btn-white{background:#fff;color:#0b3d2e}
+.btn-outline-white{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+.btn-sm{padding:8px 12px;font-size:14px;border-radius:10px}
+.btn-lg{padding:14px 22px;font-size:16px}
+.full{width:100%}
+
+/* SEÇÕES */
+section{padding:44px 0}
+h2{font-size:clamp(24px,3.6vw,32px);margin:0 0 6px;letter-spacing:-.015em;line-height:1.2}
+h3{margin:0;font-size:18px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 22px;max-width:720px}
+.sub.small{margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.sec-t{margin:34px 0 4px;font-size:20px}
+
+/* TOOLTIP */
+.tip{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--blue-l);color:var(--blue);font-size:12px;font-weight:800;cursor:help;position:relative;vertical-align:middle;margin-left:4px;outline:none;font-style:normal;flex:none}
+.tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:max-content;max-width:270px;background:#13221c;color:#fff;font-size:13px;font-weight:500;line-height:1.45;padding:10px 12px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .15s;z-index:60;text-align:left;white-space:normal;letter-spacing:0;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.tip:hover::after,.tip:focus::after{opacity:1}
+@media (max-width:640px){.tip::after{position:fixed;left:14px;right:14px;bottom:14px;top:auto;transform:none;max-width:none;width:auto;font-size:14px}}
+
+/* COMO FUNCIONA */
+.passos{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.passo{position:relative;padding-top:24px}
+.passo .num{position:absolute;top:-12px;left:18px;background:var(--green);color:#fff;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;box-shadow:0 0 0 4px var(--bg)}
+.passo .emoji{font-size:30px;margin-bottom:6px}
+.passo p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.passo p b{color:var(--ink)}
+.destaque{display:flex;gap:16px;align-items:center;margin-top:16px;background:linear-gradient(135deg,#fff,#f0fbf6);border-color:#bfe7d6}
+.destaque-ico{font-size:40px}
+.destaque p{margin:4px 0 0;color:var(--muted)}
+.destaque p b{color:var(--ink)}
+.glossario{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.glo{background:#fff;border:1px dashed #cfdcd6;border-radius:12px;padding:12px 14px;font-size:14px;color:var(--muted)}
+.glo b{display:block;color:var(--ink);font-size:15px;margin-bottom:2px}
+@media(max-width:860px){.passos,.glossario{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.passos,.glossario{grid-template-columns:1fr}.passos{gap:22px}}
+
+/* SIMULADOR */
+.sim{background:linear-gradient(#eaf2ee,var(--bg) 320px)}
+.simtop{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mesbox small{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:12px;letter-spacing:.06em}
+.mes{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.dots{display:flex;gap:5px;margin-top:6px;flex-wrap:wrap}
+.dot{width:22px;height:8px;border-radius:99px;background:var(--line)}
+.dot.done{background:var(--green)}
+.dot.cur{background:var(--gold);box-shadow:0 0 0 3px var(--gold-l)}
+.simbtns{display:flex;gap:8px;flex-wrap:wrap}
+
+.steps{list-style:none;padding:0;margin:16px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;counter-reset:s}
+.steps li{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:600;font-size:15px;color:var(--muted);transition:.2s}
+.steps li span{width:26px;height:26px;border-radius:50%;background:var(--line);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--muted);flex:none}
+.steps li small{display:block;font-weight:500;font-size:12px}
+.steps li.active{border-color:var(--green);color:var(--ink);box-shadow:0 0 0 4px var(--green-l)}
+.steps li.active span{background:var(--green);color:#fff}
+.steps li.done{color:var(--green-d)}
+.steps li.done span{background:var(--green-l);color:var(--green-d)}
+@media(max-width:600px){.steps li{flex-direction:column;text-align:center;gap:4px;font-size:13px;padding:10px 6px}.steps li small{display:none}}
+
+.agora{background:var(--blue-l);border:1px solid #c9d8ff;color:#1b3478;border-radius:14px;padding:14px 16px;font-size:15.5px;margin-bottom:16px}
+
+/* FLUXO */
+.dinheiro h3{display:flex;align-items:center;margin-bottom:18px}
+.flow{display:grid;grid-template-columns:1fr 64px 1.15fr 64px 1fr;align-items:center;gap:6px}
+.node{background:#fafcfb;border:2px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;transition:.25s;min-height:118px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px}
+.node .ico{font-size:28px;line-height:1}
+.node b{font-size:15px}
+.node small{color:var(--muted);font-size:13px;line-height:1.35}
+.node.active{border-color:var(--green);background:#fff;box-shadow:0 0 0 4px var(--green-l)}
+.node.win.active{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-l)}
+.caixa-mini{margin-top:6px;background:var(--green-l);color:var(--green-d);font-weight:800;border-radius:8px;padding:3px 10px;font-size:15px}
+.arrow{height:4px;background:var(--line);position:relative;border-radius:4px}
+.arrow::after{content:"";position:absolute;right:-6px;top:50%;transform:translateY(-50%);border:8px solid transparent;border-left:9px solid var(--line);border-right:0}
+.arrow span{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;color:var(--muted);white-space:nowrap;letter-spacing:.04em}
+.arrow.active{background:repeating-linear-gradient(90deg,var(--green) 0 10px,transparent 10px 16px);background-size:32px 4px;animation:flowh .6s linear infinite}
+.arrow.active::after{border-left-color:var(--green)}
+.arrow.active span{color:var(--green-d)}
+.arrow.gold.active{background:repeating-linear-gradient(90deg,var(--gold) 0 10px,transparent 10px 16px);background-size:32px 4px}
+.arrow.gold.active::after{border-left-color:var(--gold)}
+@keyframes flowh{to{background-position:32px 0}}
+@keyframes flowv{to{background-position:0 32px}}
+.caixa-row{margin-top:20px;display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+.caixa-v{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--green-d);min-width:150px}
+.caixa-row small{color:var(--muted);display:flex;align-items:center}
+.prog{height:12px;background:var(--line);border-radius:99px;overflow:hidden}
+.prog>div{height:100%;background:linear-gradient(90deg,var(--green),#34d399);border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.prog.full>div{background:linear-gradient(90deg,var(--gold),#ffd34d)}
+@media(max-width:720px){
+  .flow{grid-template-columns:1fr}
+  .node{min-height:0;flex-direction:row;flex-wrap:wrap;justify-content:flex-start;text-align:left;gap:4px 10px;padding:12px}
+  .node .ico{font-size:24px}
+  .arrow{width:4px;height:34px;margin:0 auto}
+  .arrow::after{right:auto;left:50%;top:auto;bottom:-6px;transform:translateX(-50%);border:8px solid transparent;border-top:9px solid var(--line);border-bottom:0}
+  .arrow.active::after{border-top-color:var(--green);border-left-color:transparent}
+  .arrow.gold.active::after{border-top-color:var(--gold);border-left-color:transparent}
+  .arrow span{top:50%;left:14px;transform:translateY(-50%)}
+  .arrow.active{background:repeating-linear-gradient(180deg,var(--green) 0 10px,transparent 10px 16px);background-size:4px 32px;animation:flowv .6s linear infinite}
+  .arrow.gold.active{background:repeating-linear-gradient(180deg,var(--gold) 0 10px,transparent 10px 16px);background-size:4px 32px}
+  .caixa-row{grid-template-columns:1fr;gap:8px}
+}
+
+/* AÇÃO */
+.acao{margin-top:16px;border-width:2px;border-color:#cfe6dc}
+.acao-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.acao-h h3{font-size:20px}
+.acao p{margin:8px 0}
+.pill{display:inline-block;background:var(--green-l);color:var(--green-d);font-weight:800;font-size:12px;padding:4px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
+.pill.gold{background:var(--gold-l);color:var(--gold-d)}
+.dica{background:var(--gold-l);border:1px solid #f5dc8c;color:#5c4300;border-radius:12px;padding:10px 14px;font-size:14.5px;margin-top:14px}
+.warn{color:#8a3a10;background:#fff1e6;border-radius:10px;padding:8px 12px;font-size:14px}
+.nomes{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.nome{background:var(--green-l);color:var(--green-d);font-weight:600;font-size:14px;padding:5px 10px;border-radius:99px}
+.nome.fora{background:#f0f2f1;color:#9aa6a1;text-decoration:line-through}
+.modos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.modo{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;transition:.15s;background:#fff}
+.modo.on{border-color:var(--green);background:#f6fcf9}
+.modo input{margin-top:4px;accent-color:var(--green)}
+.modo small{display:block;color:var(--muted);font-size:13px;line-height:1.4;margin-top:2px}
+@media(max-width:600px){.modos{grid-template-columns:1fr}}
+.escolha{margin:6px 0 10px}
+.escolha select,.cfg select,.cfg input[type=text],.cfg input[type=number]{font:inherit;font-size:15px;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+.escolha label{font-weight:600;display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.roleta{margin:14px auto;max-width:440px;text-align:center;font-size:clamp(24px,5vw,32px);font-weight:800;letter-spacing:-.02em;background:#13221c;color:#fff;border-radius:16px;padding:22px 16px;border:4px solid #2d4a3e;min-height:92px;display:grid;place-items:center}
+.roleta.girando{border-color:var(--gold)}
+.roleta.flash{animation:flash .12s ease-out}
+@keyframes flash{from{transform:scale(.96);opacity:.6}to{transform:scale(1);opacity:1}}
+.winner{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,#fff8de,#ffefb3);border:2px solid #f3cf5b;border-radius:16px;padding:16px 18px;margin:10px 0;animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+.trofeu{font-size:46px;line-height:1}
+.winner small{color:#7a5a00;font-weight:600}
+.wname{font-size:clamp(22px,4vw,28px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.explica{margin:12px 0;padding-left:20px}
+.explica li{margin:6px 0}
+.final-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.final-stats>div{background:#f6faf8;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.final-stats small{display:block;color:var(--muted);font-weight:600}
+.final-stats b{display:block;font-size:26px;letter-spacing:-.02em}
+.final-stats span{font-size:13px;color:var(--muted)}
+.final-stats .ok{background:var(--green-l);border-color:#b6e5cf}
+.final-stats .ok b{color:var(--green-d)}
+@media(max-width:600px){.final-stats{grid-template-columns:1fr}}
+.ordem{list-style:none;padding:0;margin:8px 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.ordem li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:600}
+.ordem .om{display:inline-block;min-width:60px;color:var(--gold-d);font-size:13px;font-weight:800}
+
+/* MEMBROS */
+.membros{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:12px}
+.mcard{background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px;transition:.2s}
+.mcard.paid{border-color:#b6e5cf;background:#f7fdfa}
+.mcard.won{background:linear-gradient(#fffdf4,#fff)}
+.mcard.sel{border-color:var(--gold);box-shadow:0 0 0 4px var(--gold-l)}
+.mtop{display:flex;gap:10px;align-items:center}
+.av{width:40px;height:40px;border-radius:50%;color:#fff;font-weight:800;display:grid;place-items:center;font-size:14px;flex:none}
+.mn{min-width:0}
+.mn b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{display:inline-flex;align-items:center;gap:4px;background:#f0f3f2;color:var(--muted);font-weight:600;font-size:12.5px;padding:3px 9px;border-radius:99px;align-self:flex-start}
+.badge.gold{background:var(--gold-l);color:var(--gold-d)}
+.badge.blue{background:var(--blue-l);color:var(--blue);margin-top:2px}
+.badge.pulse{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 5px rgba(240,177,0,.2)}}
+.mnums{display:flex;justify-content:space-between;gap:6px;font-size:13px;color:var(--muted)}
+.mnums b{display:block;color:var(--ink);font-size:15px}
+.ok-tag{display:block;text-align:center;background:var(--green-l);color:var(--green-d);font-weight:700;font-size:14px;padding:8px;border-radius:10px}
+
+/* QUADRO */
+.tbl-wrap{overflow-x:auto;margin:-4px}
+.quadro{border-collapse:separate;border-spacing:3px;width:100%;font-size:14px}
+.quadro th{font-size:12px;color:var(--muted);font-weight:700;padding:6px 4px;text-align:center;white-space:nowrap}
+.quadro th.cur{color:var(--gold-d)}
+.quadro td{text-align:center;padding:7px 6px;border-radius:8px;white-space:nowrap}
+.quadro td.sticky,.quadro th.sticky{position:sticky;left:0;background:#fff;text-align:left;z-index:1;font-weight:600;padding-right:12px}
+.mini-av{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
+.quadro td.pg{background:var(--green-l);color:var(--green-d);font-weight:800}
+.quadro td.win{background:var(--gold-l)}
+.quadro td.pend{background:#fff1e6;color:#b25b1a}
+.quadro td.fut{color:#c3ccc8}
+.quadro td.cur{box-shadow:inset 0 0 0 2px var(--gold)}
+.quadro td.saldo{font-weight:800}
+.saldo.pos{color:var(--blue)} .saldo.neg{color:var(--red)} .saldo.zero{color:var(--green-d)}
+.quadro tfoot td{border-top:2px solid var(--line);padding-top:10px}
+.legenda{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:14px;font-size:13.5px;color:var(--muted)}
+.legenda span{display:inline-flex;align-items:center;gap:6px}
+.lg{display:inline-grid;place-items:center;width:24px;height:22px;border-radius:6px;font-size:12px;font-weight:800}
+.saldo-exp{margin-top:12px;font-size:14px;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px}
+.saldo-exp b.pos{color:var(--blue)} .saldo-exp b.neg{color:var(--red)} .saldo-exp b.zero{color:var(--green-d)}
+
+/* HISTÓRICO */
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14.5px;align-items:baseline}
+.hist li:last-child{border-bottom:0}
+.hm{flex:none;background:#f0f3f2;color:var(--muted);font-weight:800;font-size:12px;padding:3px 9px;border-radius:99px}
+.hist li.now .hm{background:var(--gold-l);color:var(--gold-d)}
+.hist li.vazio{color:var(--muted)}
+
+/* CONFIG */
+.cfg{margin-top:34px}
+.cfg summary{cursor:pointer;font-weight:700;font-size:16px;list-style:none;display:flex;align-items:center;justify-content:space-between}
+.cfg summary::-webkit-details-marker{display:none}
+.cfg summary::after{content:"▾";transition:.2s;color:var(--muted)}
+.cfg[open] summary::after{transform:rotate(180deg)}
+.cfg-body{margin-top:16px;display:grid;gap:14px}
+.cfg-top{display:flex;gap:14px;flex-wrap:wrap}
+.cfg-top label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:14px}
+.cfg-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.cfg-item{display:flex;gap:6px;align-items:center}
+.cfg-item .ci{width:24px;color:var(--muted);font-size:13px;font-weight:700;text-align:right;flex:none}
+.cfg-item input{flex:1;min-width:0}
+#cfgAviso:empty{display:none}
+
+/* CALC */
+.calc label{font-weight:700;font-size:18px;display:block}
+.calc input[type=range]{width:100%;accent-color:var(--gold);margin:14px 0 10px;height:26px}
+.calc-bar{display:flex;gap:4px;margin-bottom:16px}
+.cb{flex:1;border-radius:8px;padding:6px 0;text-align:center;font-size:16px;min-width:0}
+.cb small{display:block;font-size:10.5px;font-weight:700;opacity:.75}
+.cb.a{background:var(--green-l);color:var(--green-d)}
+.cb.w{background:var(--gold);color:#2b1d00;transform:scale(1.08);box-shadow:0 4px 12px rgba(240,177,0,.4)}
+.cb.d{background:#eef1f0;color:var(--muted)}
+.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cg{background:#f7faf9;border:1px solid var(--line);border-radius:12px;padding:12px}
+.cg small{display:block;color:var(--muted);font-size:13px;line-height:1.35}
+.cg b{display:block;font-size:22px;letter-spacing:-.02em;margin-top:4px}
+.cg.w{background:var(--gold-l);border-color:#f5dc8c}
+.cg.ok{background:var(--green-l);border-color:#b6e5cf}
+.cg.ok b{color:var(--green-d)}
+.calc-msg{margin:14px 0 0;font-size:15.5px;background:var(--blue-l);color:#1b3478;border-radius:12px;padding:12px 14px}
+@media(max-width:760px){.calc-grid{grid-template-columns:1fr 1fr}.cb small{font-size:9px}.cb{font-size:13px}}
+
+/* FAQ */
+.faq{display:grid;gap:10px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:0;box-shadow:var(--shadow)}
+.faq summary{cursor:pointer;padding:16px 18px;font-weight:700;font-size:16px;list-style:none;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:22px;color:var(--green);font-weight:600;transition:.2s;flex:none}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq .r{padding:0 18px 16px;color:#33443d}
+.faq .r p{margin:0 0 8px}
+
+footer{padding:30px 0 40px;text-align:center;color:var(--muted);font-size:14px}
+footer b{color:var(--ink)}
+
+/* TOAST + CONFETE */
+#toasts{position:fixed;right:16px;bottom:16px;z-index:80;display:flex;flex-direction:column;gap:8px;align-items:flex-end;pointer-events:none;max-width:calc(100vw - 32px)}
+.toast{background:#13221c;color:#fff;padding:11px 14px;border-radius:12px;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.22);transform:translateY(12px);opacity:0;transition:.25s;max-width:380px;border-left:4px solid #6b7c75}
+.toast.in{transform:none;opacity:1}
+.toast.ok{border-left-color:var(--green)}
+.toast.gold{border-left-color:var(--gold)}
+@media(max-width:640px){#toasts{left:16px;right:16px;align-items:stretch}.toast{max-width:none}}
+#confete{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:90}
+#confete span{position:absolute;top:-40px;animation:cair linear forwards}
+@keyframes cair{to{transform:translateY(112vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="wrap nav-in">
+    <a href="#topo" class="brand">🤝 Consórcio PCT</a>
+    <div class="links">
+      <a href="#como">Como funciona</a>
+      <a href="#sim">Simulador</a>
+      <a href="#calc">E se eu…</a>
+      <a href="#faq">Dúvidas</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="topo">
+  <div class="wrap">
+    <span class="tag">Consórcio entre amigos · Grupo PCT</span>
+    <h1>Todo mundo paga um pouco,<br>todo mundo recebe tudo. 🤝</h1>
+    <p class="lead">Todo mês cada um coloca <b class="v-valor"></b>, uma pessoa é sorteada e leva o total. Em <b class="v-meses"></b>, <b>todo mundo</b> recebe uma vez. Sem juros, sem taxa, sem banco. Simula aí embaixo e tira tuas dúvidas. 👇</p>
+    <div class="chips">
+      <div class="chip">👥 <b class="v-n"></b> participantes</div>
+      <div class="chip">💸 <b class="v-valor"></b> por mês</div>
+      <div class="chip">📅 <b class="v-meses"></b> de duração</div>
+      <div class="chip">🏆 <b class="v-premio"></b> pra cada um</div>
+    </div>
+    <div class="row">
+      <a href="#sim" class="btn btn-white">▶ Ir para o simulador</a>
+      <a href="#faq" class="btn btn-outline-white">❓ Tirar dúvidas</a>
+    </div>
+  </div>
+</header>
+
+<!-- COMO FUNCIONA -->
+<section id="como">
+  <div class="wrap">
+    <h2>Como funciona, em 4 passos</h2>
+    <p class="sub">É aquele consórcio clássico entre amigos. Ninguém ganha em cima de ninguém: o dinheiro só passa de mão em mão.</p>
+    <div class="passos">
+      <div class="card passo"><div class="num">1</div><div class="emoji">💸</div><h3>Todo mundo paga</h3>
+        <p>Todo mês, cada um dos <b class="v-n"></b> faz um Pix de <b class="v-valor"></b> para o tesoureiro <b class="v-tes"></b>.<span class="tip" tabindex="0" data-tip="O tesoureiro é só quem recebe os Pix e repassa para o sorteado. Ele também paga a parte dele e concorre no sorteio igual a todo mundo.">?</span></p></div>
+      <div class="card passo"><div class="num">2</div><div class="emoji">💰</div><h3>Fecha o caixa</h3>
+        <p>Com todo mundo pagando, o caixa do mês fecha em <b class="v-premio"></b> (<span class="v-n"></span> × <span class="v-valor"></span>).</p></div>
+      <div class="card passo"><div class="num">3</div><div class="emoji">🎲</div><h3>Sorteio</h3>
+        <p>Sorteamos 1 pessoa entre quem <b>ainda não recebeu</b>. Ela leva os <b class="v-premio"></b> no mesmo mês, via Pix.</p></div>
+      <div class="card passo"><div class="num">4</div><div class="emoji">🔁</div><h3>Repete até todos receberem</h3>
+        <p>O sorteado sai do sorteio, <b>mas continua pagando</b> até o fim. Depois de <b class="v-meses"></b>, todos receberam uma vez.</p></div>
+    </div>
+
+    <div class="card destaque">
+      <div class="destaque-ico">⚖️</div>
+      <div>
+        <h3>Ninguém sai no prejuízo</h3>
+        <p>No final, cada um pagou <b class="v-premio"></b> (<span class="v-n"></span> meses × <span class="v-valor"></span>) e recebeu <b class="v-premio"></b>. A sorte só decide <b>quando</b> você recebe, nunca <b>se</b> você recebe.</p>
+      </div>
+    </div>
+
+    <div class="glossario">
+      <div class="glo"><b>💼 Tesoureiro</b>Quem recebe os Pix e repassa. No PCT é o <span class="v-tes"></span>.</div>
+      <div class="glo"><b>🏆 Contemplado</b>Quem foi sorteado e já recebeu o dinheiro do mês.</div>
+      <div class="glo"><b>💰 Caixa</b>O total juntado no mês. Sai inteiro para o sorteado.</div>
+      <div class="glo"><b>📅 Rodada</b>Cada mês. São tantas rodadas quanto participantes.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULADOR -->
+<section id="sim" class="sim">
+  <div class="wrap">
+    <h2>🎮 Simulador</h2>
+    <p class="sub">Faça o papel do grupo: registre os Pix, rode o sorteio e veja o dinheiro andando mês a mês. Pode clicar à vontade, é tudo de mentira. 😄</p>
+
+    <div class="card simtop">
+      <div class="mesbox">
+        <small>Rodada atual</small>
+        <div id="mesAtual" class="mes"></div>
+        <div id="mesDots" class="dots"></div>
+      </div>
+      <div class="simbtns">
+        <button class="btn btn-ghost btn-sm" data-action="simular-mes" title="Faz o mês inteiro de uma vez: todos pagam, sorteia e repassa">⏩ Simular este mês</button>
+        <button class="btn btn-ghost btn-sm" data-action="simular-tudo" title="Roda todos os meses que faltam com sorteio aleatório">⏭ Simular até o fim</button>
+        <button class="btn btn-ghost btn-sm" data-action="reset">🔁 Recomeçar</button>
+      </div>
+    </div>
+
+    <ol class="steps" id="steps">
+      <li><span>1</span><div>Depósitos<small>todos fazem o Pix</small></div></li>
+      <li><span>2</span><div>Sorteio<small>1 pessoa é sorteada</small></div></li>
+      <li><span>3</span><div>Repasse<small>o sorteado recebe</small></div></li>
+    </ol>
+
+    <div class="agora" id="agora"></div>
+
+    <div class="card dinheiro">
+      <h3>Pra onde o dinheiro vai <span class="tip" tabindex="0" data-tip="As setas que se mexem mostram o dinheiro andando no passo atual: primeiro dos amigos para o tesoureiro, depois do tesoureiro para o sorteado.">?</span></h3>
+      <div class="flow">
+        <div class="node" id="fnAmigos"><div class="ico">👥</div><b><span class="v-n"></span> amigos</b><small id="flowAmigos"></small></div>
+        <div class="arrow" id="faPix"><span>PIX <span class="v-valor"></span></span></div>
+        <div class="node" id="fnTes"><div class="ico">💼</div><b>Tesoureiro</b><small class="v-tes"></small><div class="caixa-mini" id="caixaMini">R$ 0</div></div>
+        <div class="arrow gold" id="faRep"><span>PIX <span class="v-premio"></span></span></div>
+        <div class="node win" id="fnWin"><div class="ico">🏆</div><b>Sorteado do mês</b><small id="flowWinner"></small></div>
+      </div>
+      <div class="caixa-row">
+        <div class="caixa-v" id="caixaValor">R$ 0</div>
+        <div>
+          <div class="prog" id="caixaProg"><div id="caixaBar" style="width:0"></div></div>
+          <small id="caixaInfo" style="margin-top:6px"></small>
+        </div>
+      </div>
+    </div>
+
+    <div class="card acao" id="acao"></div>
+
+    <h3 class="sec-t">👥 Participantes</h3>
+    <p class="sub small">Cada card mostra quanto a pessoa já pagou e recebeu. No passo 1, clique em <b>“Fazer Pix”</b> para simular o pagamento de cada um.</p>
+    <div class="membros" id="membros"></div>
+
+    <h3 class="sec-t">📋 Quadro geral</h3>
+    <p class="sub small">Cada linha é uma pessoa e cada coluna é um mês (M1, M2…). Passe o mouse (ou toque) nas células para ver o detalhe.</p>
+    <div class="card">
+      <div class="tbl-wrap"><table class="quadro" id="quadro"></table></div>
+      <div class="legenda">
+        <span><i class="lg" style="background:var(--green-l);color:var(--green-d)">✓</i> pagou o mês</span>
+        <span><i class="lg" style="background:var(--gold-l)">🏆</i> pagou e recebeu o caixa</span>
+        <span><i class="lg" style="background:#fff1e6;color:#b25b1a">⏳</i> ainda não pagou este mês</span>
+        <span><i class="lg" style="background:var(--gold-l)">🎲</i> sorteado, esperando o Pix</span>
+        <span><i class="lg" style="color:#c3ccc8">·</i> mês que ainda não chegou</span>
+      </div>
+      <div class="saldo-exp">
+        <b>Como ler o Saldo</b> (recebeu − pagou):
+        <b class="neg">negativo</b> = dinheiro que a pessoa já colocou e vai voltar quando ela for sorteada ·
+        <b class="pos">positivo</b> = já recebeu e ainda vai pagar os meses que faltam ·
+        <b class="zero">R$ 0</b> = tudo certo, é como todo mundo termina.
+        Na linha Total, a diferença entre o que foi pago e recebido é exatamente o que está no caixa agora.
+      </div>
+    </div>
+
+    <h3 class="sec-t">🧾 Histórico</h3>
+    <div class="card"><ul class="hist" id="hist"></ul></div>
+
+    <details class="card cfg" id="cfg">
+      <summary>⚙️ Configurar a simulação (nomes, valor, tesoureiro)</summary>
+      <div class="cfg-body">
+        <p class="small muted" style="margin:0">Quer testar com outro valor ou outra turma? Edite aqui e clique em “Aplicar”. A simulação recomeça do mês 1.</p>
+        <div class="cfg-top">
+          <label>Valor mensal (R$)<input type="number" id="cfgValor" min="1" step="1" style="width:140px"></label>
+          <label>Tesoureiro<select id="cfgTes"></select></label>
+        </div>
+        <div class="cfg-lista" id="cfgLista"></div>
+        <div class="row">
+          <input type="text" id="cfgNovo" placeholder="Nome de mais um participante" maxlength="40" style="flex:1;min-width:200px;font:inherit;font-size:15px;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px">
+          <button class="btn btn-ghost btn-sm" data-action="cfg-add">+ Adicionar</button>
+        </div>
+        <div class="small muted" id="cfgResumo"></div>
+        <div class="warn" id="cfgAviso"></div>
+        <div class="row">
+          <button class="btn btn-primary btn-sm" data-action="cfg-aplicar">✓ Aplicar e recomeçar</button>
+          <button class="btn btn-ghost btn-sm" data-action="cfg-padrao">↺ Voltar para o padrão do PCT</button>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- CALCULADORA -->
+<section id="calc">
+  <div class="wrap">
+    <h2>🤔 “E se eu for sorteado no mês…?”</h2>
+    <p class="sub">Arraste e veja o que acontece com o seu dinheiro dependendo de quando você for sorteado.</p>
+    <div class="card calc">
+      <label>Se eu for sorteado no mês <span id="calcMes" style="color:var(--gold-d)">1</span></label>
+      <input type="range" id="calcRange" min="1" max="10" value="1" aria-label="Mês em que você é sorteado">
+      <div class="calc-bar" id="calcBar"></div>
+      <div class="calc-grid" id="calcGrid"></div>
+      <p class="calc-msg" id="calcMsg"></p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <h2>❓ Dúvidas frequentes</h2>
+    <p class="sub">As perguntas que todo mundo faz antes de entrar. Clica pra abrir.</p>
+    <div class="faq">
+      <details open>
+        <summary>Eu vou receber mesmo? E se eu for o último?</summary>
+        <div class="r"><p><b>Vai, com certeza.</b> São <span class="v-n"></span> participantes e <span class="v-meses"></span>. Em cada mês uma pessoa <b>diferente</b> recebe, porque quem já foi sorteado não entra mais no sorteio.</p>
+        <p>Então no último mês sobra exatamente uma pessoa, e ela recebe. Ninguém fica de fora. Teste no simulador: aperte “Simular até o fim” quantas vezes quiser.</p></div>
+      </details>
+      <details>
+        <summary>Depois que eu for sorteado, eu paro de pagar?</summary>
+        <div class="r"><p><b>Não!</b> Essa é a regra mais importante. Quem já recebeu continua pagando <span class="v-valor"></span> por mês até o fim.</p>
+        <p>Pensa assim: se o sorteado do mês 1 parasse de pagar, no mês 2 o caixa teria só <b class="v-premio-menos"></b>, e quem fosse sorteado sairia perdendo. Todo mundo pagando todo mês é o que garante que cada um receba <span class="v-premio"></span> inteiro.</p></div>
+      </details>
+      <details>
+        <summary>Tem juros, taxa ou alguém lucra com isso?</summary>
+        <div class="r"><p><b>Não.</b> 100% do que entra no caixa sai no mesmo mês para o sorteado. Ninguém cobra nada, e o tesoureiro não fica com um centavo além da cota dele quando for sorteado.</p></div>
+      </details>
+      <details>
+        <summary>Então qual é a vantagem de participar?</summary>
+        <div class="r"><p><b>Se você é sorteado cedo:</b> recebe <span class="v-premio"></span> tendo pago pouco. É como um empréstimo <b>sem juros</b> que você devolve em parcelas de <span class="v-valor"></span>.</p>
+        <p><b>Se você é sorteado tarde:</b> funciona como uma poupança forçada. Você junta <span class="v-premio"></span> sem a tentação de gastar no meio do caminho.</p>
+        <p>Sendo sincero: esse dinheiro não rende nada nesse período. Quem recebe por último poderia ter deixado numa poupança e ganhado uns trocados de rendimento. É o “preço” de ninguém pagar juros. Veja a seção <a href="#calc">“E se eu for sorteado no mês…”</a>.</p></div>
+      </details>
+      <details>
+        <summary>Como vai ser o sorteio de verdade? Dá pra roubar?</summary>
+        <div class="r"><p>O sorteio é <b>aleatório</b>, só entre quem ainda não recebeu, e a ideia é fazer <b>com todo mundo vendo</b>: numa chamada, ao vivo no grupo, com papelzinho ou num sorteador online com a tela compartilhada.</p>
+        <p>O modo <b>“🧪 Escolher quem ganha”</b> existe <b>só aqui no simulador</b>. Ele serve pra mostrar que, mesmo “viciando” a ordem, no final todo mundo pagou e recebeu exatamente a mesma coisa.</p></div>
+      </details>
+      <details>
+        <summary>E se alguém atrasar ou não pagar?</summary>
+        <div class="r"><p>O sorteado do mês só recebe o valor cheio se <b>todo mundo</b> pagar. Por isso, no simulador, o sorteio fica travado 🔒 até os <span class="v-n"></span> pagarem.</p>
+        <p>Vale o grupo combinar antes uma data limite para o Pix de cada mês e o que fazer se alguém atrasar. O combinado é entre a gente.</p></div>
+      </details>
+      <details>
+        <summary>O tesoureiro tem alguma vantagem?</summary>
+        <div class="r"><p><b>Nenhuma.</b> O <span class="v-tes"></span> paga os mesmos <span class="v-valor"></span>, concorre no sorteio igual a todo mundo e só faz o papel de juntar e repassar. Para ficar transparente, todo Pix (de entrada e de saída) pode ter comprovante mandado no grupo.</p></div>
+      </details>
+      <details>
+        <summary>Onde o dinheiro fica guardado?</summary>
+        <div class="r"><p>Na conta do tesoureiro, só por poucos dias: junta os Pix do mês, faz o sorteio e repassa tudo para o sorteado. O dinheiro <b>não fica parado</b> acumulando.</p></div>
+      </details>
+      <details>
+        <summary>Quanto tempo dura e quanto eu pago no total?</summary>
+        <div class="r"><p>Dura <b class="v-meses"></b> (um mês para cada participante). Você paga <span class="v-valor"></span> por mês, ou seja, <b class="v-premio"></b> no total, e recebe <b class="v-premio"></b> uma vez.</p></div>
+      </details>
+      <details>
+        <summary>Dá pra trocar de posição se alguém estiver precisando mais?</summary>
+        <div class="r"><p>Se o grupo topar, quem foi sorteado pode trocar a vez com alguém que está apertado. Isso é acordo entre a gente. O simulador mostra só o sorteio puro.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Simulador ilustrativo do consórcio do grupo <b>PCT</b>. Os valores reais são os combinados no grupo.<br>
+    Desenvolvido por <b>Filipe Santana</b>
+  </div>
+</footer>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="confete" aria-hidden="true"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ===== Configuração padrão do grupo ===== */
+const PADRAO = {
+  valor: 100,
+  nomes: ["Filipe Santana","Lucca","Flávio","João Ricardo","Pedro","João Vitor","João Ricardo (2)","Artur","Luis","Guilherme"],
+  tesIdx: 0
+};
+const CORES = ['#0e9f6e','#2563eb','#d97706','#db2777','#7c3aed','#0891b2','#dc2626','#65a30d','#9333ea','#ea580c','#0f766e','#4f46e5'];
+
+let cfg, st, draft;
+const ui = { modoTeste:false, escolhido:null };
+let caixaShown = 0, caixaRaf = 0;
+
+/* ===== Helpers ===== */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:Number.isInteger(v)?0:2,maximumFractionDigits:2});
+const iniciais = n => n.replace(/\(.*?\)/g,'').trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase() || '?';
+const primeiroNome = n => n.split(' ')[0];
+
+// Sorteio justo: número aleatório criptográfico, sem viés
+function rand(n){
+  if(n <= 1) return 0;
+  const max = Math.floor(0x100000000 / n) * n, a = new Uint32Array(1);
+  let x; do { crypto.getRandomValues(a); x = a[0]; } while (x >= max);
+  return x % n;
+}
+
+const N = () => cfg.membros.length;
+const PREMIO = () => cfg.valor * N();
+const membro = id => cfg.membros.find(m => m.id === id);
+const tes = () => membro(cfg.tesId);
+const elegiveis = () => cfg.membros.filter(m => !st.contemplados.has(m.id));
+const pago = id => (st.historico.filter(h => h.pagaram.includes(id)).length + (st.pagos.has(id) ? 1 : 0)) * cfg.valor;
+const recebido = id => st.contemplados.has(id) ? PREMIO() : 0;
+
+/* ===== Estado ===== */
+function aplicarConfig(c){
+  cfg = { valor:c.valor, membros:c.nomes.map((nome,i)=>({id:i, nome, cor:CORES[i % CORES.length]})), tesId:c.tesIdx };
+  draft = { valor:c.valor, nomes:[...c.nomes], tesIdx:c.tesIdx };
+  reset();
+}
+function reset(){
+  st = { mes:1, pagos:new Set(), caixa:0, fase:'deposito', vencedor:null, modo:null, historico:[], contemplados:new Map(), sorteando:false };
+  ui.modoTeste = false; ui.escolhido = null;
+  render();
+}
+
+/* ===== Regras (núcleo) ===== */
+function corePagar(id){
+  if(st.fase !== 'deposito' || st.pagos.has(id)) return false;
+  st.pagos.add(id); st.caixa += cfg.valor;
+  if(st.pagos.size === N()) st.fase = 'sorteio';
+  return true;
+}
+function escolherVencedor(respeitaTeste){
+  const e = elegiveis();
+  if(e.length === 1) return { m:e[0], modo:'ultimo' };
+  if(respeitaTeste && ui.modoTeste){
+    const m = e.find(x => x.id === ui.escolhido);
+    if(m) return { m, modo:'teste' };
+  }
+  return { m:e[rand(e.length)], modo:'aleatorio' };
+}
+function coreDefinir(m, modo){ st.vencedor = m.id; st.modo = modo; st.fase = 'repasse'; }
+function coreRepassar(){
+  const id = st.vencedor;
+  st.historico.push({ mes:st.mes, vencedor:id, modo:st.modo, valor:st.caixa, pagaram:[...st.pagos] });
+  st.contemplados.set(id, st.mes);
+  st.caixa = 0; st.vencedor = null; st.modo = null; st.pagos = new Set();
+  if(st.mes >= N()) st.fase = 'fim';
+  else { st.mes++; st.fase = 'deposito'; }
+  return id;
+}
+function passoMes(respeitaTeste){
+  if(st.fase === 'deposito') cfg.membros.forEach(m => corePagar(m.id));
+  if(st.fase === 'sorteio'){ const {m,modo} = escolherVencedor(respeitaTeste); coreDefinir(m, modo); }
+  return coreRepassar();
+}
+
+/* ===== Ações da interface ===== */
+function acaoPagar(id){
+  const m = membro(id);
+  if(!corePagar(id)) return;
+  toast(id === cfg.tesId
+    ? `💼 <b>${esc(m.nome)}</b> (tesoureiro) separou os ${brl(cfg.valor)} dele no caixa`
+    : `💸 <b>${esc(m.nome)}</b> fez um Pix de ${brl(cfg.valor)} para ${esc(tes().nome)}`);
+  if(st.fase === 'sorteio') toast('✅ Todo mundo pagou! O sorteio foi liberado.', 'ok');
+  render();
+}
+function acaoTodos(){
+  let k = 0;
+  cfg.membros.forEach(m => { if(corePagar(m.id)) k++; });
+  if(!k) return;
+  toast(`💸 ${k} Pix de ${brl(cfg.valor)} chegaram na conta de ${esc(tes().nome)}`);
+  toast('✅ Todo mundo pagou! O sorteio foi liberado.', 'ok');
+  render();
+}
+async function acaoSortear(){
+  if(st.fase !== 'sorteio' || st.sorteando) return;
+  const lista = elegiveis();
+  const { m, modo } = escolherVencedor(true);
+  st.sorteando = true; render();
+  await animarRoleta(lista, m);
+  st.sorteando = false;
+  coreDefinir(m, modo);
+  render(); confete();
+  toast(`🎉 <b>${esc(m.nome)}</b> foi contemplado no mês ${st.mes}!`, 'gold');
+}
+function acaoRepassar(){
+  if(st.fase !== 'repasse') return;
+  const id = st.vencedor, w = membro(id);
+  coreRepassar();
+  toast(id === cfg.tesId
+    ? `🏆 Os ${brl(PREMIO())} ficaram com <b>${esc(w.nome)}</b> (tesoureiro e sorteado do mês)`
+    : `🏆 ${esc(tes().nome)} fez um Pix de ${brl(PREMIO())} para <b>${esc(w.nome)}</b>`, 'gold');
+  if(st.fase === 'fim'){ confete(); toast('🏁 Fim! Todo mundo foi contemplado.', 'ok'); }
+  else toast(`📅 Começou o mês ${st.mes}. Hora de todo mundo pagar de novo (inclusive ${esc(primeiroNome(w.nome))}).`);
+  render();
+}
+function simularMes(){
+  if(st.sorteando || st.fase === 'fim') return;
+  const mes = st.mes, id = passoMes(st.fase === 'sorteio');
+  toast(`⏩ Mês ${mes} simulado: <b>${esc(membro(id).nome)}</b> recebeu ${brl(PREMIO())}`, 'gold');
+  if(st.fase === 'fim'){ confete(); toast('🏁 Fim! Todo mundo foi contemplado.', 'ok'); }
+  render();
+}
+function simularTudo(){
+  if(st.sorteando || st.fase === 'fim') return;
+  let c = 0;
+  while(st.fase !== 'fim'){ passoMes(false); c++; }
+  toast(`⏭ ${c} ${c>1?'meses simulados':'mês simulado'} com sorteio aleatório`, 'ok');
+  confete(); render();
+  $('#acao').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function animarRoleta(lista, vencedor){
+  return new Promise(res => {
+    const el = () => document.getElementById('roleta');
+    if(lista.length === 1){ const r = el(); if(r) r.textContent = vencedor.nome; setTimeout(res, 500); return; }
+    const total = 28; let i = 0, idx = rand(lista.length);
+    const tick = () => {
+      i++;
+      let nome;
+      if(i >= total) nome = vencedor.nome;
+      else { idx = (idx + 1 + rand(lista.length - 1)) % lista.length; nome = lista[idx].nome; }
+      const r = el();
+      if(r){ r.textContent = nome; r.classList.remove('flash'); void r.offsetWidth; r.classList.add('flash'); }
+      if(i >= total){ setTimeout(res, 500); return; }
+      setTimeout(tick, 45 + Math.pow(i/total, 3) * 400);
+    };
+    tick();
+  });
+}
+
+/* ===== Render ===== */
+function render(){
+  renderStatic(); renderTopo(); renderSteps(); renderAgora(); renderFlow(); renderCaixa();
+  renderAcao(); renderMembros(); renderQuadro(); renderHist(); renderCalc();
+}
+function renderStatic(){
+  const set = (cls, v) => $$(cls).forEach(e => e.textContent = v);
+  set('.v-valor', brl(cfg.valor));
+  set('.v-n', N());
+  set('.v-premio', brl(PREMIO()));
+  set('.v-premio-menos', brl(PREMIO() - cfg.valor));
+  set('.v-tes', tes().nome);
+  set('.v-meses', `${N()} meses`);
+}
+function renderTopo(){
+  const fim = st.fase === 'fim';
+  $('#mesAtual').textContent = fim ? 'Concluído ✅' : `Mês ${st.mes} de ${N()}`;
+  $('#mesDots').innerHTML = cfg.membros.map((_,i) => {
+    const m = i+1, c = fim || m < st.mes ? 'done' : (m === st.mes ? 'cur' : '');
+    return `<span class="dot ${c}" title="Mês ${m}"></span>`;
+  }).join('');
+  $$('[data-action="simular-mes"],[data-action="simular-tudo"]').forEach(b => b.disabled = fim || st.sorteando);
+  $$('.simbtns [data-action="reset"]').forEach(b => b.disabled = st.sorteando);
+}
+function renderSteps(){
+  const i = st.fase === 'fim' ? 3 : ['deposito','sorteio','repasse'].indexOf(st.fase);
+  $$('#steps li').forEach((li,k) => { li.classList.toggle('done', k < i); li.classList.toggle('active', k === i); });
+}
+function renderAgora(){
+  const n = N(), k = st.pagos.size, e = elegiveis(), t = esc(tes().nome);
+  let h = '';
+  if(st.fase === 'deposito'){
+    h = `<b>📍 Mês ${st.mes}: hora de pagar.</b> Cada um dos ${n} faz um Pix de ${brl(cfg.valor)} para ${t}. `
+      + (k ? `Já pagaram ${k}, falta${n-k>1?'m':''} ${n-k}. ` : 'Ninguém pagou ainda. ')
+      + `O sorteio só libera quando <b>todos</b> pagarem${st.mes>1?', inclusive quem já foi sorteado nos meses anteriores':''}.`;
+  } else if(st.fase === 'sorteio'){
+    h = e.length === 1
+      ? `<b>📍 Último mês!</b> Todos pagaram e só sobrou <b>${esc(e[0].nome)}</b> sem receber. Nem precisa sortear: é a vez dele.`
+      : `<b>📍 Todo mundo pagou!</b> O caixa fechou em ${brl(st.caixa)}. Agora sorteamos 1 entre os <b>${e.length}</b> que ainda não receberam.`;
+  } else if(st.fase === 'repasse'){
+    const w = membro(st.vencedor);
+    h = w.id === cfg.tesId
+      ? `<b>📍 Temos um sorteado!</b> Deu o próprio tesoureiro, ${esc(w.nome)}. O caixa já está com ele; é só mostrar o extrato pro grupo.`
+      : `<b>📍 Temos um sorteado!</b> ${esc(w.nome)} vai receber ${brl(PREMIO())}. Falta ${t} fazer o Pix do caixa para ele.`;
+  } else {
+    h = `<b>🏁 Fim do consórcio!</b> Os ${n} participantes receberam ${brl(PREMIO())} cada, um por mês. Repare no quadro: todo mundo terminou com saldo R$ 0.`;
+  }
+  $('#agora').innerHTML = h;
+}
+function renderFlow(){
+  const f = st.fase;
+  $('#fnAmigos').classList.toggle('active', f === 'deposito');
+  $('#faPix').classList.toggle('active', f === 'deposito');
+  $('#fnTes').classList.toggle('active', f !== 'fim');
+  $('#faRep').classList.toggle('active', f === 'repasse');
+  $('#fnWin').classList.toggle('active', f === 'repasse');
+  $('#flowAmigos').textContent = f === 'fim' ? 'todos pagaram tudo' : `${st.pagos.size} de ${N()} pagaram este mês`;
+  $('#flowWinner').innerHTML = f === 'repasse'
+    ? `<b>${esc(membro(st.vencedor).nome)}</b> recebe ${brl(PREMIO())}`
+    : (f === 'fim' ? 'todos já receberam' : `recebe ${brl(PREMIO())}`);
+}
+function renderCaixa(){
+  const P = PREMIO(), pct = Math.min(100, st.caixa / P * 100);
+  $('#caixaBar').style.width = pct + '%';
+  $('#caixaProg').classList.toggle('full', pct >= 100);
+  const info = {
+    deposito:`Caixa do mês ${st.mes}: ${st.pagos.size} de ${N()} Pix recebidos (meta ${brl(P)})`,
+    sorteio:'Caixa completo! Pronto para o sorteio.',
+    repasse:'Esse valor inteiro vai para o sorteado.',
+    fim:'Consórcio encerrado. O caixa fica zerado.'
+  }[st.fase];
+  $('#caixaInfo').innerHTML = esc(info) + ' <span class="tip" tabindex="0" data-tip="O caixa é o dinheiro juntado no mês. Ele enche com os Pix de todo mundo e esvazia inteiro quando o tesoureiro paga o sorteado. Nunca sobra dinheiro parado.">?</span>';
+  const from = caixaShown, to = st.caixa, t0 = performance.now(), d = 550;
+  cancelAnimationFrame(caixaRaf);
+  const step = t => {
+    const p = Math.min(1, (t - t0) / d);
+    caixaShown = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+    $('#caixaValor').textContent = brl(caixaShown);
+    $('#caixaMini').textContent = 'Caixa: ' + brl(caixaShown);
+    if(p < 1) caixaRaf = requestAnimationFrame(step);
+  };
+  caixaRaf = requestAnimationFrame(step);
+}
+function renderAcao(){
+  const n = N(), v = cfg.valor, P = PREMIO(), t = tes(), eleg = elegiveis();
+  let h = '';
+  if(st.fase === 'deposito'){
+    const k = st.pagos.size, f = n - k;
+    h = `<div class="acao-h"><span class="pill">Passo 1 de 3</span><h3>Todo mundo faz o Pix de ${brl(v)}</h3></div>
+      <p>Simule o pagamento de cada um clicando em <b>“Fazer Pix”</b> no card da pessoa (logo abaixo), ou faça todos pagarem de uma vez:</p>
+      <div class="prog"><div style="width:${k/n*100}%"></div></div>
+      <p class="small muted">${k} de ${n} pagaram · falta${f>1?'m':''} ${f} · caixa: ${brl(st.caixa)} de ${brl(P)}</p>
+      <div class="row">
+        <button class="btn btn-primary" data-action="todos">💸 Todos pagam ${brl(v)}</button>
+        <button class="btn btn-ghost" disabled>🔒 Sorteio (falta${f>1?'m':''} ${f} pagar${f>1?'em':''})</button>
+      </div>
+      ${st.mes > 1
+        ? `<div class="dica">💡 Repare: os ${st.contemplados.size} que já receberam também pagam este mês. Sem eles, o caixa não chegaria a ${brl(P)}.</div>`
+        : `<div class="dica">💡 Teste: pague só alguns e veja que o sorteio continua travado. Na vida real é igual: o sorteado só recebe ${brl(P)} se todo mundo pagar.</div>`}`;
+  } else if(st.fase === 'sorteio'){
+    const dis = st.sorteando ? 'disabled' : '';
+    if(eleg.length === 1){
+      h = `<div class="acao-h"><span class="pill">Passo 2 de 3</span><h3>Último mês: não precisa sortear</h3></div>
+        <p>Todos os outros já foram contemplados. Sobrou só <b>${esc(eleg[0].nome)}</b>, que recebe agora. Por isso ninguém fica sem receber.</p>
+        <div class="roleta" id="roleta">${esc(eleg[0].nome)}</div>
+        <div class="row center"><button class="btn btn-primary btn-lg" data-action="sortear" ${dis}>🏁 Confirmar ${esc(primeiroNome(eleg[0].nome))} como último contemplado</button></div>`;
+    } else {
+      if(!eleg.some(m => m.id === ui.escolhido)) ui.escolhido = eleg[0].id;
+      h = `<div class="acao-h"><span class="pill">Passo 2 de 3</span><h3>Sorteio do mês ${st.mes}</h3></div>
+        <p>Só concorre quem <b>ainda não recebeu</b> (${eleg.length} pessoas). Os riscados já foram contemplados e não entram mais:</p>
+        <div class="nomes">${cfg.membros.map(m => {
+          const c = st.contemplados.get(m.id);
+          return `<span class="nome ${c?'fora':''}" title="${c?'Já recebeu no mês '+c:'Concorrendo'}">${esc(m.nome)}</span>`;
+        }).join('')}</div>
+        <div class="modos">
+          <label class="modo ${!ui.modoTeste?'on':''}"><input type="radio" name="modo" value="aleatorio" ${!ui.modoTeste?'checked':''} ${dis}>
+            <span><b>🎲 Sorteio aleatório</b><small>Como vai ser de verdade: cada um tem a mesma chance (1 em ${eleg.length}).</small></span></label>
+          <label class="modo ${ui.modoTeste?'on':''}"><input type="radio" name="modo" value="teste" ${ui.modoTeste?'checked':''} ${dis}>
+            <span><b>🧪 Escolher quem ganha</b><small>Só pra testar: “vicie” o sorteio e veja que no final dá igual pra todo mundo.</small></span></label>
+        </div>
+        ${ui.modoTeste ? `<div class="escolha">
+          <label>Quem ganha este mês? <select id="escolha" ${dis}>${eleg.map(m => `<option value="${m.id}" ${m.id===ui.escolhido?'selected':''}>${esc(m.nome)}</option>`).join('')}</select></label>
+          <p class="warn">⚠️ Isso só existe no simulador. No consórcio de verdade o sorteio é aleatório e feito com todo mundo vendo.</p></div>` : ''}
+        <div class="roleta ${st.sorteando?'girando':''}" id="roleta">${st.sorteando ? '…' : '🎲 ?'}</div>
+        <div class="row center"><button class="btn btn-primary btn-lg" data-action="sortear" ${dis}>${st.sorteando ? '🎲 Sorteando…' : (ui.modoTeste ? '🧪 Sortear (com resultado escolhido)' : '🎲 Sortear agora')}</button></div>`;
+    }
+  } else if(st.fase === 'repasse'){
+    const w = membro(st.vencedor), rest = n - st.mes, ehTes = w.id === cfg.tesId;
+    const modoTxt = st.modo === 'teste' ? '🧪 escolhido no modo teste' : st.modo === 'ultimo' ? '🏁 último que faltava' : '🎲 sorteio aleatório';
+    h = `<div class="acao-h"><span class="pill gold">Passo 3 de 3</span><h3>Repasse para o sorteado</h3></div>
+      <div class="winner"><div class="trofeu">🏆</div><div><small>Contemplado do mês ${st.mes} · ${modoTxt}</small><div class="wname">${esc(w.nome)}</div><div>recebe <b>${brl(P)}</b></div></div></div>
+      <ul class="explica">
+        <li>${ehTes
+          ? `Como ${esc(w.nome)} é o próprio tesoureiro, os ${brl(P)} já estão na conta dele. É só mandar o print do extrato no grupo pra todo mundo conferir.`
+          : `${esc(t.nome)} (tesoureiro) faz um Pix de ${brl(P)} para ${esc(w.nome)} e manda o comprovante no grupo.`}</li>
+        <li>Até agora ${esc(primeiroNome(w.nome))} pagou ${brl(st.mes * v)} e vai receber ${brl(P)}.</li>
+        <li>${rest > 0
+          ? `A partir de agora ${esc(primeiroNome(w.nome))} <b>sai do sorteio</b>, mas <b>continua pagando ${brl(v)}</b> nos próximos ${rest} ${rest>1?'meses':'mês'} (mais ${brl(rest*v)}). No final terá pago ${brl(P)}, o mesmo que recebeu.`
+          : 'Esse era o último mês, então acabou: não tem mais nada pra pagar.'}</li>
+      </ul>
+      <div class="row"><button class="btn btn-gold btn-lg" data-action="repassar">💸 ${ehTes ? 'Confirmar repasse' : `Fazer Pix de ${brl(P)} para ${esc(primeiroNome(w.nome))}`}</button></div>`;
+  } else {
+    const ordem = st.historico.map(x => `<li><span class="om">Mês ${x.mes}</span>${esc(membro(x.vencedor).nome)}${x.modo==='teste'?' 🧪':''}</li>`).join('');
+    const teveTeste = st.historico.some(x => x.modo === 'teste');
+    h = `<div class="acao-h"><span class="pill">Concluído</span><h3>🎉 Todo mundo foi contemplado!</h3></div>
+      <div class="final-stats">
+        <div><small>Cada um pagou</small><b>${brl(P)}</b><span>${n} meses × ${brl(v)}</span></div>
+        <div><small>Cada um recebeu</small><b>${brl(P)}</b><span>uma vez, no seu mês</span></div>
+        <div class="ok"><small>Saldo final de cada um</small><b>R$ 0</b><span>ninguém perdeu nada</span></div>
+      </div>
+      <p><b>Ordem em que cada um recebeu:</b></p>
+      <ul class="ordem">${ordem}</ul>
+      <div class="dica">💡 Rode de novo: a ordem muda, mas o resultado final é sempre o mesmo para todo mundo. A sorte só decide <b>quando</b> cada um recebe.${teveTeste?' Mesmo com o sorteio “viciado” (🧪), o saldo final continuou zero para todos.':''}</div>
+      <div class="row" style="margin-top:14px"><button class="btn btn-primary" data-action="reset">🔁 Simular de novo</button></div>`;
+  }
+  $('#acao').innerHTML = h;
+}
+function renderMembros(){
+  $('#membros').innerHTML = cfg.membros.map(m => {
+    const pg = st.pagos.has(m.id), ct = st.contemplados.get(m.id), isW = st.vencedor === m.id, isT = m.id === cfg.tesId;
+    let acao;
+    if(st.fase === 'deposito') acao = pg
+      ? `<span class="ok-tag">✓ Pix do mês ${st.mes} feito</span>`
+      : `<button class="btn btn-primary btn-sm full" data-action="pagar" data-id="${m.id}">💸 Fazer Pix ${brl(cfg.valor)}</button>`;
+    else if(st.fase === 'fim') acao = `<span class="ok-tag">✓ Pagou e recebeu tudo</span>`;
+    else acao = `<span class="ok-tag">✓ Pix do mês ${st.mes} feito</span>`;
+    const status = ct ? `<span class="badge gold">🏆 Recebeu no mês ${ct}</span>`
+      : isW ? `<span class="badge gold pulse">🎲 Sorteado agora!</span>`
+      : `<span class="badge">⏳ Aguardando sorteio</span>`;
+    return `<div class="mcard ${pg && st.fase==='deposito'?'paid':''} ${ct?'won':''} ${isW?'sel':''}">
+      <div class="mtop"><div class="av" style="background:${m.cor}">${esc(iniciais(m.nome))}</div>
+        <div class="mn"><b title="${esc(m.nome)}">${esc(m.nome)}</b>${isT?'<span class="badge blue">💼 Tesoureiro</span>':''}</div></div>
+      ${status}
+      <div class="mnums"><span>Pagou<b>${brl(pago(m.id))}</b></span><span style="text-align:right">Recebeu<b>${brl(recebido(m.id))}</b></span></div>
+      ${acao}
+    </div>`;
+  }).join('');
+}
+function renderQuadro(){
+  const n = N(), fim = st.fase === 'fim';
+  let h = `<thead><tr><th class="sticky">Participante</th>${
+    Array.from({length:n},(_,i)=>`<th class="${!fim && i+1===st.mes?'cur':''}" title="Mês ${i+1}">M${i+1}</th>`).join('')
+  }<th>Pagou</th><th>Recebeu</th><th>Saldo</th></tr></thead><tbody>`;
+  let totP = 0, totR = 0;
+  for(const m of cfg.membros){
+    h += `<tr><td class="sticky"><span class="mini-av" style="background:${m.cor}"></span>${esc(m.nome)}</td>`;
+    for(let mes = 1; mes <= n; mes++){
+      const hs = st.historico[mes-1];
+      let c, t, cls;
+      if(hs){
+        cls = 'pg'; c = '✓'; t = `Mês ${mes}: pagou ${brl(cfg.valor)}`;
+        if(hs.vencedor === m.id){ cls = 'win'; c = '🏆'; t += ` e recebeu ${brl(hs.valor)}`; }
+      } else if(mes === st.mes && !fim){
+        if(st.vencedor === m.id){ cls = 'win cur'; c = '🎲'; t = `Mês ${mes}: pagou e foi sorteado, esperando o Pix`; }
+        else if(st.pagos.has(m.id)){ cls = 'pg cur'; c = '✓'; t = `Mês ${mes}: já pagou`; }
+        else { cls = 'pend cur'; c = '⏳'; t = `Mês ${mes}: ainda não pagou`; }
+      } else { cls = 'fut'; c = '·'; t = `Mês ${mes}: ainda não chegou`; }
+      h += `<td class="${cls}" title="${esc(t)}">${c}</td>`;
+    }
+    const p = pago(m.id), r = recebido(m.id), s = r - p;
+    totP += p; totR += r;
+    h += `<td>${brl(p)}</td><td>${brl(r)}</td><td class="saldo ${s>0?'pos':s<0?'neg':'zero'}">${s>0?'+':''}${brl(s)}</td></tr>`;
+  }
+  h += `</tbody><tfoot><tr><td class="sticky"><b>Total</b></td><td colspan="${n}" class="muted small" style="text-align:right">caixa agora: <b>${brl(st.caixa)}</b></td><td><b>${brl(totP)}</b></td><td><b>${brl(totR)}</b></td><td></td></tr></tfoot>`;
+  $('#quadro').innerHTML = h;
+}
+function renderHist(){
+  const items = [];
+  if(st.fase !== 'fim' && (st.pagos.size || st.fase !== 'deposito')){
+    items.push(`<li class="now"><span class="hm">Mês ${st.mes}</span><div>Em andamento: ${st.pagos.size}/${N()} Pix recebidos${st.vencedor!=null?` · sorteado: <b>${esc(membro(st.vencedor).nome)}</b>, aguardando o repasse`:''}</div></li>`);
+  }
+  for(const x of [...st.historico].reverse()){
+    const modo = x.modo === 'teste' ? '🧪 escolhido no modo teste' : x.modo === 'ultimo' ? '🏁 último que faltava' : '🎲 sorteio aleatório';
+    items.push(`<li><span class="hm">Mês ${x.mes}</span><div>💸 ${x.pagaram.length} Pix de ${brl(cfg.valor)} = ${brl(x.valor)} no caixa → ${modo}: <b>${esc(membro(x.vencedor).nome)}</b> recebeu ${brl(x.valor)}</div></li>`);
+  }
+  $('#hist').innerHTML = items.length ? items.join('') : `<li class="vazio">Nada ainda. Comece registrando os Pix do mês 1 lá em cima ☝️</li>`;
+}
+function renderCalc(){
+  const r = $('#calcRange'), n = N(), v = cfg.valor, P = PREMIO();
+  r.max = n;
+  const x = Math.min(Math.max(1, +r.value || 1), n); r.value = x;
+  $('#calcMes').textContent = x;
+  const antes = x * v, depois = (n - x) * v, adiant = P - antes;
+  $('#calcBar').innerHTML = Array.from({length:n}, (_,i) => {
+    const m = i+1, c = m < x ? 'a' : m === x ? 'w' : 'd';
+    return `<div class="cb ${c}" title="Mês ${m}: ${m===x?'você paga '+brl(v)+' e recebe '+brl(P):'você paga '+brl(v)}"><small>M${m}</small>${m===x?'🏆':'💸'}</div>`;
+  }).join('');
+  $('#calcGrid').innerHTML = `
+    <div class="cg"><small>Pago até receber (mês 1 ao ${x})</small><b>${brl(antes)}</b></div>
+    <div class="cg w"><small>Você recebe no mês ${x}</small><b>${brl(P)}</b></div>
+    <div class="cg"><small>${depois ? `Ainda paga depois (${n-x} ${n-x>1?'meses':'mês'})` : 'Paga depois'}</small><b>${brl(depois)}</b></div>
+    <div class="cg ok"><small>No final: pagou ${brl(P)}, recebeu ${brl(P)}</small><b>Saldo R$ 0 ✅</b></div>`;
+  let msg;
+  if(x === 1) msg = `Sorteado logo no 1º mês: você pagou só ${brl(v)} e já recebe ${brl(P)}. É como pegar ${brl(adiant)} emprestado <b>sem juros</b> e devolver em ${n-1} parcelas de ${brl(v)}.`;
+  else if(x === n) msg = `Último a receber: foi como guardar ${brl(v)} por mês numa “poupança forçada” e resgatar ${brl(P)} no final. Você não deve nada a ninguém.`;
+  else msg = `No mês ${x} você recebe ${brl(P)} tendo pago ${brl(antes)}: fica ${brl(adiant)} “adiantado” e devolve isso pagando os ${n-x} meses que faltam, sem juros.`;
+  $('#calcMsg').innerHTML = '💬 ' + msg;
+}
+
+/* ===== Configuração ===== */
+function renderCfg(){
+  $('#cfgValor').value = draft.valor;
+  $('#cfgLista').innerHTML = draft.nomes.map((nm,i) => `<div class="cfg-item"><span class="ci">${i+1}</span>
+    <input type="text" value="${esc(nm)}" data-cfg-nome="${i}" maxlength="40" aria-label="Nome do participante ${i+1}">
+    <button class="btn btn-ghost btn-sm" data-action="cfg-rem" data-idx="${i}" title="Remover" ${draft.nomes.length<=2?'disabled':''}>✕</button></div>`).join('');
+  renderCfgTes(); renderCfgResumo(); $('#cfgAviso').textContent = '';
+}
+function renderCfgTes(){
+  $('#cfgTes').innerHTML = draft.nomes.map((nm,i) => `<option value="${i}" ${i===draft.tesIdx?'selected':''}>${esc(nm.trim()||'(sem nome)')}</option>`).join('');
+}
+function renderCfgResumo(){
+  const v = Math.round(+draft.valor) || 0, k = draft.nomes.length;
+  $('#cfgResumo').textContent = `${k} participantes × ${brl(v)} = ${brl(v*k)} para cada sorteado · duração de ${k} meses`;
+}
+function cfgAdd(){
+  const inp = $('#cfgNovo'), nm = inp.value.trim();
+  if(!nm) return;
+  if(draft.nomes.length >= 30){ $('#cfgAviso').textContent = 'Limite de 30 participantes no simulador.'; return; }
+  draft.nomes.push(nm); inp.value = ''; renderCfg();
+}
+function cfgRem(i){
+  if(draft.nomes.length <= 2) return;
+  draft.nomes.splice(i, 1);
+  if(i < draft.tesIdx) draft.tesIdx--; else if(i === draft.tesIdx) draft.tesIdx = 0;
+  renderCfg();
+}
+function cfgAplicar(){
+  const aviso = s => { $('#cfgAviso').textContent = '⚠️ ' + s; };
+  const nomes = draft.nomes.map(s => s.trim());
+  if(nomes.length < 2) return aviso('Precisa de pelo menos 2 participantes.');
+  if(nomes.some(s => !s)) return aviso('Tem participante sem nome.');
+  const dup = nomes.find((s,i) => nomes.findIndex(y => y.toLowerCase() === s.toLowerCase()) !== i);
+  if(dup) return aviso(`O nome "${dup}" aparece duas vezes. Diferencie (ex: "${dup} S.").`);
+  const valor = Math.round(+draft.valor);
+  if(!(valor > 0)) return aviso('O valor mensal precisa ser maior que zero.');
+  aplicarConfig({ valor, nomes, tesIdx:Math.min(draft.tesIdx, nomes.length-1) });
+  renderCfg();
+  toast('⚙️ Configuração aplicada. A simulação recomeçou do mês 1.', 'ok');
+}
+
+/* ===== Efeitos ===== */
+function toast(msg, tipo=''){
+  const box = $('#toasts'), t = document.createElement('div');
+  t.className = 'toast ' + tipo; t.innerHTML = msg; box.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('in'));
+  setTimeout(() => { t.classList.remove('in'); setTimeout(() => t.remove(), 300); }, 3400);
+  while(box.children.length > 4) box.firstElementChild.remove();
+}
+function confete(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = $('#confete'), em = ['🎉','💸','🏆','✨','💰'];
+  for(let i = 0; i < 36; i++){
+    const s = document.createElement('span');
+    s.textContent = em[i % em.length];
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.fontSize = (16 + Math.random()*18) + 'px';
+    s.style.animationDuration = (1.5 + Math.random()*1.5) + 's';
+    s.style.animationDelay = (Math.random()*.3) + 's';
+    box.appendChild(s);
+    setTimeout(() => s.remove(), 3500);
+  }
+}
+
+/* ===== Eventos ===== */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-action]');
+  if(!b || b.disabled) return;
+  const acoes = {
+    'pagar': () => acaoPagar(+b.dataset.id),
+    'todos': acaoTodos,
+    'sortear': acaoSortear,
+    'repassar': acaoRepassar,
+    'simular-mes': simularMes,
+    'simular-tudo': simularTudo,
+    'reset': () => { if(st.sorteando) return; reset(); toast('🔁 Simulação reiniciada no mês 1'); $('#sim').scrollIntoView({behavior:'smooth'}); },
+    'cfg-add': cfgAdd,
+    'cfg-rem': () => cfgRem(+b.dataset.idx),
+    'cfg-aplicar': cfgAplicar,
+    'cfg-padrao': () => { aplicarConfig(PADRAO); renderCfg(); toast('↺ Voltou para a configuração padrão do PCT', 'ok'); }
+  };
+  (acoes[b.dataset.action] || (() => {}))();
+});
+document.addEventListener('change', e => {
+  const el = e.target;
+  if(el.name === 'modo' && !st.sorteando){ ui.modoTeste = el.value === 'teste'; renderAcao(); }
+  else if(el.id === 'escolha'){ ui.escolhido = +el.value; }
+  else if(el.id === 'cfgTes'){ draft.tesIdx = +el.value; }
+});
+document.addEventListener('input', e => {
+  const el = e.target;
+  if(el.id === 'calcRange') renderCalc();
+  else if(el.dataset && el.dataset.cfgNome !== undefined){ draft.nomes[+el.dataset.cfgNome] = el.value; renderCfgTes(); }
+  else if(el.id === 'cfgValor'){ draft.valor = el.value; renderCfgResumo(); }
+});
+$('#cfgNovo').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); cfgAdd(); } });
+
+/* ===== Início ===== */
+aplicarConfig(PADRAO);
+renderCfg();
+})();
+</script>
+</body>
+</html>
